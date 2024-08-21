@@ -1,0 +1,112 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="KhachSanModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="tb_DatPhong">
+    <Key>
+      <PropertyRef Name="IDThueP" />
+    </Key>
+    <Property Name="IDThueP" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="IDPhong" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="IDKH" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="NgayDat" Type="DateTime" Precision="0" />
+    <Property Name="SoNguoi" Type="Int32" />
+  </EntityType>
+  <EntityType Name="tb_DichVu">
+    <Key>
+      <PropertyRef Name="IDDV" />
+    </Key>
+    <Property Name="IDDV" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="TenDV" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="Gia" Type="Double" />
+    <Property Name="LoaiDV" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="tb_HoaDon">
+    <Key>
+      <PropertyRef Name="IDHoaDon" />
+    </Key>
+    <Property Name="IDHoaDon" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="IDNV" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="IDKH" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="Note" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+    <Property Name="TongTien" Type="Double" />
+    <Property Name="NgayThanhToan" Type="DateTime" Precision="0" />
+  </EntityType>
+  <EntityType Name="tb_KhachHang">
+    <Key>
+      <PropertyRef Name="IDKH" />
+    </Key>
+    <Property Name="IDKH" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="HoTen" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="NgaySinh" Type="DateTime" Precision="0" />
+    <Property Name="GioiTinh" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="SDT" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="CCCD" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="tb_LoaiPhong">
+    <Key>
+      <PropertyRef Name="IDLoaiP" />
+    </Key>
+    <Property Name="IDLoaiP" Type="Int32" Nullable="false" />
+    <Property Name="TenLoaiP" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="Gia" Type="Double" />
+    <Property Name="SoGiuong" Type="Int32" />
+    <Property Name="SoNguoi" Type="Int32" />
+  </EntityType>
+  <EntityType Name="tb_NhanVien">
+    <Key>
+      <PropertyRef Name="IDNV" />
+    </Key>
+    <Property Name="IDNV" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="HoTen" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="NgaySinh" Type="DateTime" Precision="0" />
+    <Property Name="GioiTinh" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="Email" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="SDT" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="DiaChi" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+    <Property Name="CCCD" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="tb_Phong">
+    <Key>
+      <PropertyRef Name="IDPhong" />
+    </Key>
+    <Property Name="IDPhong" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="TenP" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="IDLoaiP" Type="Int32" />
+    <Property Name="IDTrangThai" Type="Int32" />
+  </EntityType>
+  <EntityType Name="tb_SuDungDV">
+    <Key>
+      <PropertyRef Name="IDThueDV" />
+    </Key>
+    <Property Name="IDThueDV" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="IDDV" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="IDKH" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="SoLuong" Type="Int32" />
+  </EntityType>
+  <EntityType Name="tb_TrangThai">
+    <Key>
+      <PropertyRef Name="IDTrangThai" />
+    </Key>
+    <Property Name="IDTrangThai" Type="Int32" Nullable="false" />
+    <Property Name="TenTrangThai" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="tb_User">
+    <Key>
+      <PropertyRef Name="UID" />
+    </Key>
+    <Property Name="UID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="PassW" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="IDNV" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityContainer Name="KhachSanEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="tb_DatPhong" EntityType="Self.tb_DatPhong" />
+    <EntitySet Name="tb_DichVu" EntityType="Self.tb_DichVu" />
+    <EntitySet Name="tb_HoaDon" EntityType="Self.tb_HoaDon" />
+    <EntitySet Name="tb_KhachHang" EntityType="Self.tb_KhachHang" />
+    <EntitySet Name="tb_LoaiPhong" EntityType="Self.tb_LoaiPhong" />
+    <EntitySet Name="tb_NhanVien" EntityType="Self.tb_NhanVien" />
+    <EntitySet Name="tb_Phong" EntityType="Self.tb_Phong" />
+    <EntitySet Name="tb_SuDungDV" EntityType="Self.tb_SuDungDV" />
+    <EntitySet Name="tb_TrangThai" EntityType="Self.tb_TrangThai" />
+    <EntitySet Name="tb_User" EntityType="Self.tb_User" />
+  </EntityContainer>
+</Schema>
