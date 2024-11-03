@@ -18,6 +18,7 @@ namespace QuanLyKhachSan
         public FormLogin()
         {
             InitializeComponent();
+            this.AcceptButton = btnDangNhap;
         
         }
         string connectionString = "Data Source=DESKTOP-JKB5K32\\SQLEXPRESS;Initial Catalog=KhachSan;Integrated Security=True;Encrypt=False";

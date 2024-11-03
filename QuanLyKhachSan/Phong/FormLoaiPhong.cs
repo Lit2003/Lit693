@@ -86,7 +86,7 @@ namespace QuanLyKhachSan.Phong
         }
         private void btnXoa_Click(object sender, EventArgs e)
         {
-            CapNhatTrangThaiPhong();         
+            xoa();         
         }
         private void btnSua_Click(object sender, EventArgs e)
         {
@@ -124,46 +124,42 @@ namespace QuanLyKhachSan.Phong
                 loadDataLoaiP();
             }
         }
-        void CapNhatTrangThaiPhong()
+        void xoa()
         {
-            string tenloaiphong = txbTenP.Text; // Loại phòng VIP
 
+            string tenloaiphong = txbTenP.Text; 
             using (SqlConnection con = new SqlConnection(connectionString))
             {
-                string queryUpdatePhong = "UPDATE tb_Phong SET IDTrangThai = '3',IDLoaiP = '1' WHERE IDLoaiP = (SELECT IDLoaiP FROM tb_LoaiPhong WHERE TenLoaiP = @TenLoaiP)";
-                SqlCommand cmdUpdatePhong = new SqlCommand(queryUpdatePhong, con);
+                con.Open();
+
+                // Kiểm tra phòng đã đặt
+                int bookedRoomsCount = (int)new SqlCommand(@"
+            SELECT COUNT(*) 
+            FROM tb_Phong 
+            WHERE IDLoaiP = (SELECT IDLoaiP FROM tb_LoaiPhong WHERE TenLoaiP = @TenLoaiP) 
+            AND IDTrangThai = '2'", con).ExecuteScalar();
+
+                if (bookedRoomsCount > 0)
+                {
+                    MessageBox.Show("Không thể cập nhật trạng thái vì có phòng đang được đặt.");
+                    return;
+                }
+
+                // Cập nhật trạng thái phòng
+                var cmdUpdatePhong = new SqlCommand(@"
+            UPDATE tb_Phong 
+            SET IDTrangThai = '3', IDLoaiP = '1' 
+            WHERE IDLoaiP = (SELECT IDLoaiP FROM tb_LoaiPhong WHERE TenLoaiP = @TenLoaiP)", con);
                 cmdUpdatePhong.Parameters.AddWithValue("@TenLoaiP", tenloaiphong);
 
-                try
-                {
-                    con.Open();
-                    SqlTransaction transaction = con.BeginTransaction();
-                    cmdUpdatePhong.Transaction = transaction;
-
-                    // Thực hiện cập nhật trạng thái phòng
-                    int rowsAffected = cmdUpdatePhong.ExecuteNonQuery();
-
-                    if (rowsAffected > 0)
-                    {
-                        transaction.Commit();
-                       // MessageBox.Show($"Đã cập nhật trạng thái các phòng có loại phòng '{tenloaiphong}' thành 'Bảo trì'.");
-                        // Có thể thêm thao tác load lại danh sách phòng sau khi cập nhật
-                    }
-                    else
-                    {
-                        transaction.Rollback();
-                        MessageBox.Show($"Không có phòng nào có loại phòng '{tenloaiphong}' để cập nhật.");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Lỗi khi cập nhật trạng thái phòng: {ex.Message}");
-                }
-                finally
-                {
-                    con.Close();
-                }
+                int rowsAffected = cmdUpdatePhong.ExecuteNonQuery();
+                if (rowsAffected > 0)
+                    MessageBox.Show("Cập nhật trạng thái phòng thành công.");
+                else
+                    MessageBox.Show($"Không có phòng nào có loại '{tenloaiphong}' để cập nhật.");
             }
+
+            // Xóa loại phòng
             using (KhachSanEntities db = new KhachSanEntities())
             {
                 int Id = int.Parse(txbID.Text);
@@ -172,6 +168,7 @@ namespace QuanLyKhachSan.Phong
                 MessageBox.Show("Xóa Loại Phòng Thành Công");
                 loadDataLoaiP();
             }
+
             NotifyDataChanged();
             loadDataLoaiP();
         }

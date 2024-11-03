@@ -75,7 +75,7 @@ GROUP BY
             ReportDataSource rds = new ReportDataSource("DataSet1", dataTable);
             this.reportViewer1.LocalReport.DataSources.Clear();
             this.reportViewer1.LocalReport.DataSources.Add(rds);
-            this.reportViewer1.LocalReport.ReportPath = "D:\\Đồ_án\\QuanLyKhachSan\\QuanLyKhachSan\\ThongKe\\rptThongKeDoanhThu.rdlc";
+            this.reportViewer1.LocalReport.ReportPath = "D:\\QuanLyKS\\QuanLyKhachSan\\QuanLyKhachSan\\ThongKe\\rptThongKeDoanhThu.rdlc";
 
             this.reportViewer1.RefreshReport();
         }

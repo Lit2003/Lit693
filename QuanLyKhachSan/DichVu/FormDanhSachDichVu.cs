@@ -55,7 +55,6 @@ namespace QuanLyKhachSan.DichVu
                 MessageBox.Show("Error: " + ex.Message);
                 return;
             }
-            ResetID();
             binding(dataGridView1);
         }
         void binding(DataGridView dtgv)
@@ -138,11 +137,31 @@ namespace QuanLyKhachSan.DichVu
             using (KhachSanEntities db = new KhachSanEntities())
             {
                 string id = txbID.Text;
-                db.tb_DichVu.Remove(db.tb_DichVu.Find(id));
-                db.SaveChanges();
-                ResetID();
-                MessageBox.Show("Xóa Dịch Vụ Thành Công");
-                loadData();
+
+                // Kiểm tra xem dịch vụ có đang được sử dụng hay không
+                bool isUsed = db.tb_SuDungDV.Any(sdv => sdv.IDDV == id);
+                if (isUsed)
+                {
+                    MessageBox.Show("Không thể xóa dịch vụ này vì nó đang được sử dụng.");
+                    return; // Kết thúc nếu dịch vụ đang được sử dụng
+                }
+
+                // Tìm và xóa dịch vụ
+                tb_DichVu dichVu = db.tb_DichVu.Find(id);
+                if (dichVu != null)
+                {
+                    db.tb_DichVu.Remove(dichVu);
+                    db.SaveChanges();
+                    MessageBox.Show("Xóa Dịch Vụ Thành Công");
+
+                    // Gọi hàm ResetID để cập nhật lại ID dịch vụ
+                    ResetID();
+                    loadData(); // Tải lại dữ liệu
+                }
+                else
+                {
+                    MessageBox.Show("Không tìm thấy dịch vụ với ID đã cho.");
+                }
             }
         }
         void Sua()
@@ -176,7 +195,7 @@ namespace QuanLyKhachSan.DichVu
                 {
                     tb_DichVu newService = new tb_DichVu
                     {
-                        IDDV = newId.ToString(),
+                        IDDV = newId.ToString(), // Gán ID mới
                         TenDV = service.TenDV,
                         Gia = service.Gia,
                         LoaiDV = service.LoaiDV
@@ -185,9 +204,12 @@ namespace QuanLyKhachSan.DichVu
                     newId++;
                 }
 
+                // Xóa tất cả các dịch vụ hiện có
                 db.tb_DichVu.RemoveRange(db.tb_DichVu);
+                // Thêm lại các dịch vụ với ID mới
                 db.tb_DichVu.AddRange(reorderedServices);
                 db.SaveChanges();
+               // MessageBox.Show("Reset ID Dịch Vụ Thành Công");
             }
         }
         private void LoadDataIntoComboBox()

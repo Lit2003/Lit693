@@ -195,10 +195,28 @@ namespace QuanLyKhachSan.Phong
             using (KhachSanEntities db = new KhachSanEntities())
             {
                 string id = txbID.Text;
-                db.tb_Phong.Remove(db.tb_Phong.Find(id));
+
+                // Tìm phòng theo ID
+                tb_Phong phong = db.tb_Phong.Find(id);
+                if (phong == null)
+                {
+                    MessageBox.Show("Không tìm thấy phòng với ID đã cho.");
+                    return; // Kết thúc nếu không tìm thấy phòng
+                }
+
+                // Kiểm tra trạng thái của phòng
+                if (phong.IDTrangThai == db.tb_TrangThai.FirstOrDefault(tt => tt.TenTrangThai == "Đã Thuê")?.IDTrangThai)
+                {
+                    MessageBox.Show("Không thể xóa phòng này vì nó đang trong trạng thái Đã Thuê.");
+                    return; // Kết thúc nếu phòng đang trong trạng thái Đã Thuê
+                }
+
+                // Xóa phòng
+                db.tb_Phong.Remove(phong);
                 db.SaveChanges();
                 MessageBox.Show("Xóa Phòng Thành Công");
-                loadData();
+                ResetID(); // Gọi phương thức ResetID nếu cần thiết
+                loadData(); // Tải lại dữ liệu
             }
         }
         void Sua()
@@ -210,11 +228,44 @@ namespace QuanLyKhachSan.Phong
                 
                 int loai = (cmbLoaiP.SelectedValue as tb_LoaiPhong).IDLoaiP;
                 int trangthai = (cmbTrangThai.SelectedValue as tb_TrangThai).IDTrangThai;
+                phong.TenP = txbTenP.Text;
                 phong.IDLoaiP = loai;
                 phong.IDTrangThai = trangthai;
                 db.SaveChanges();
                 MessageBox.Show("Sửa Phòng Thành Công");
                 loadData();
+            }
+        }
+
+
+        void ResetID()
+        {
+            using (KhachSanEntities db = new KhachSanEntities())
+            {
+                var allRooms = db.tb_Phong.OrderBy(p => p.IDPhong).ToList();
+                List<tb_Phong> reorderedRooms = new List<tb_Phong>();
+                int newId = 1;
+
+                foreach (var room in allRooms)
+                {
+                    tb_Phong newRoom = new tb_Phong
+                    {
+                        // IDPhong là khóa chính và không thể thay đổi
+                        IDPhong = newId.ToString(), // Không thể sửa đổi IDPhong của phòng đã tồn tại
+                        TenP = room.TenP,
+                        IDLoaiP = room.IDLoaiP,
+                        IDTrangThai = room.IDTrangThai,
+                    };
+                    reorderedRooms.Add(newRoom);
+                    newId++;
+                }
+
+                // Xóa tất cả các phòng hiện có
+                db.tb_Phong.RemoveRange(db.tb_Phong);
+                // Thêm lại các phòng với ID mới
+                db.tb_Phong.AddRange(reorderedRooms);
+                db.SaveChanges();
+             //   MessageBox.Show("Reset ID Phòng Thành Công");
             }
         }
 
